@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "html",
+    "jsxFragmentFactory": "html"
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "explicit-function-return-type"
+      ]
+    }
+  },
+  "fmt": {
+    "options": {
+      "useTabs": false,
+      "lineWidth": 120,
+      "indentWidth": 2
+    }
+  },
+  "tasks": {
+    "exec": "deno run --allow-read --allow-write --import-map ./imports.json ./src/main.ts"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "book-binder": "./mod.ts"
+  }
+}
