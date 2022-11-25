@@ -1,20 +1,29 @@
 import { path } from "./deps.ts";
 
+export async function ensureDirectory(path: string): Promise<void> {
+  try {
+    await Deno.mkdir(path, { recursive: true });
+  } catch {
+    // Ignore
+  }
+}
+
 export async function* enumerateFiles(
   directoryPath: string,
-  extension?: string
+  filter?: (filePath: string) => boolean
 ): AsyncGenerator<string> {
   for await (const entry of Deno.readDir(path.join(directoryPath))) {
     if (entry.isDirectory) {
       for await (const filePath of enumerateFiles(
         path.join(directoryPath, entry.name),
-        extension
+        filter
       )) {
         yield filePath;
       }
     } else if (entry.isFile) {
-      if (extension === undefined || entry.name.endsWith(extension)) {
-        yield path.join(directoryPath, entry.name);
+      const filePath = path.join(directoryPath, entry.name);
+      if (filter === undefined || filter(filePath)) {
+        yield filePath;
       }
     }
   }
@@ -33,7 +42,22 @@ export async function fileExists(filename: string): Promise<boolean> {
   }
 }
 
-export async function searchForNearestFile(
+export async function readTextFile(filePath: string): Promise<string> {
+  return await Deno.readTextFile(filePath);
+}
+
+export function readTextFileSync(filePath: string): string {
+  return Deno.readTextFileSync(filePath);
+}
+
+/**
+ * Searches for a given file (searchFileName) relative to another file's
+ * path (filePath). Similar to how node_modules resolution works.
+ * @param filePath
+ * @param searchFileName
+ * @returns
+ */
+export async function resolveFile(
   filePath: string,
   searchFileName: string
 ): Promise<string | null> {
@@ -51,4 +75,11 @@ export async function searchForNearestFile(
   }
 
   return null;
+}
+
+export async function writeTextFile(
+  filePath: string,
+  data: string
+): Promise<void> {
+  await Deno.writeTextFile(filePath, data);
 }
