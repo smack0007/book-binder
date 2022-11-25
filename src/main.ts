@@ -16,7 +16,7 @@ function shouldProcess(filePath: string): boolean {
   return !fileName.startsWith("_") && !fileName.startsWith("+");
 }
 
-async function main(args: string[]): Promise<number> {
+export async function main(args: string[]): Promise<number> {
   const inputPath = args[0];
 
   if (!inputPath) {
@@ -30,6 +30,10 @@ async function main(args: string[]): Promise<number> {
     console.error("Please provide an output directory.");
     return 1;
   }
+
+  console.info("📖 Book Binder 📖");
+  console.info(`Input: ${inputPath}`);
+  console.info(`Output: ${outputPath}`);
 
   ensureDirectory(outputPath);
 
@@ -167,5 +171,3 @@ async function processStaticFile(
 
   await copyFile(inputFilePath, outputFilePath);
 }
-
-Deno.exit(await main(Deno.args));

@@ -6,12 +6,8 @@
   },
   "lint": {
     "rules": {
-      "tags": [
-        "recommended"
-      ],
-      "include": [
-        "explicit-function-return-type"
-      ]
+      "tags": ["recommended"],
+      "include": ["explicit-function-return-type"]
     }
   },
   "fmt": {
@@ -21,7 +17,8 @@
       "indentWidth": 2
     }
   },
+  "importMap": "./imports.jsonc",
   "tasks": {
-    "exec": "deno run --allow-net --allow-read --allow-write --import-map ./imports.json ./src/main.ts"
+    "exec": "deno run --allow-net --allow-read --allow-write --config ./deno.jsonc ./cli.ts"
   }
 }
