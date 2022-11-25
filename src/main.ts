@@ -1,4 +1,3 @@
-import { file } from "https://deno.land/x/denosass@1.0.5/src/wasm/grass.deno.js";
 import { Marked, path, sass } from "./deps.ts";
 import {
   copyFile,
@@ -17,12 +16,6 @@ function shouldProcess(filePath: string): boolean {
   return !fileName.startsWith("_") && !fileName.startsWith("+");
 }
 
-type FileTypeProcessor = (
-  inputPath: string,
-  inputFilePath: string,
-  outputFilePath: string
-) => Promise<void>;
-
 async function main(args: string[]): Promise<number> {
   const inputPath = args[0];
 
@@ -40,9 +33,15 @@ async function main(args: string[]): Promise<number> {
 
   ensureDirectory(outputPath);
 
+  type FileTypeProcessor = (
+    inputPath: string,
+    inputFilePath: string,
+    outputFilePath: string
+  ) => Promise<void>;
+
   const processors: Array<[string[], FileTypeProcessor]> = [
-    [[".css", ".scss"], processCssFiles],
-    [[".md"], processMarkdownFiles],
+    [[".css", ".scss"], processCssFile],
+    [[".md"], processMarkdownFile],
   ];
 
   try {
@@ -80,26 +79,21 @@ async function main(args: string[]): Promise<number> {
   return 0;
 }
 
-async function processCssFiles(
+async function processCssFile(
   inputPath: string,
   inputFilePath: string,
   outputPath: string
 ): Promise<void> {
-  for await (const inputFilePath of enumerateFiles(
-    inputPath,
-    (filePath) => filePath.endsWith(".scss") && shouldProcess(filePath)
-  )) {
-    const outputFilePath = path.join(
-      outputPath,
-      inputFilePath.substring(inputPath.length).replaceAll(".scss", ".css")
-    );
+  const outputFilePath = path.join(
+    outputPath,
+    inputFilePath.substring(inputPath.length).replaceAll(".scss", ".css")
+  );
 
-    console.info(`${inputFilePath} => ${outputFilePath}`);
+  console.info(`${inputFilePath} => ${outputFilePath}`);
 
-    const result = loadCss(inputFilePath);
+  const result = loadCss(inputFilePath);
 
-    await writeTextFile(outputFilePath, result);
-  }
+  await writeTextFile(outputFilePath, result);
 }
 
 function loadCss(filePath: string): string {
@@ -122,7 +116,7 @@ function convertSass(input: string): string {
   }).to_string() as string;
 }
 
-async function processMarkdownFiles(
+async function processMarkdownFile(
   inputPath: string,
   inputFilePath: string,
   outputPath: string
@@ -151,7 +145,9 @@ async function layoutContent(
     const layout: LayoutFunction = (
       await import(path.toFileUrl(layoutFile).toString())
     ).default;
-    return await layout(content);
+    return await layout({
+      content,
+    });
   }
 
   return content;

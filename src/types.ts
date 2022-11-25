@@ -1,1 +1,5 @@
-export type LayoutFunction = (content: string) => Promise<string>;
+export interface LayoutFunctionArgs {
+  content: string;
+}
+
+export type LayoutFunction = (args: LayoutFunctionArgs) => Promise<string>;
