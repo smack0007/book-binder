@@ -146,12 +146,15 @@ async function layoutContent(
   const layoutFile = await resolveFile(inputPath, "+layout.tsx");
 
   if (layoutFile) {
+    console.info(`> Using layout "${inputPath}"`);
     const layout: LayoutFunction = (
       await import(path.toFileUrl(layoutFile).toString())
     ).default;
     return await layout({
       content,
     });
+  } else {
+    console.info(`> No layout found`);
   }
 
   return content;

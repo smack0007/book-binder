@@ -86,7 +86,7 @@ export async function resolveFile(
   filePath: string,
   searchFileName: string
 ): Promise<string | null> {
-  const directoryPath = path.dirname(filePath);
+  const directoryPath = path.dirname(filePath).trimEnd(path.SEP);
   const directoryParts = directoryPath.split(path.SEP);
 
   while (directoryParts.length > 0) {
