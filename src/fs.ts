@@ -89,7 +89,9 @@ export async function resolveFile(
   const directoryPath = path.dirname(filePath);
   const directoryParts = directoryPath.split(path.SEP);
 
-  console.info("===resolveFile", directoryPath, directoryParts);
+  if (directoryParts[0] === "") {
+    directoryParts.shift();
+  }
 
   while (directoryParts.length > 0) {
     const searchPath = path.join(...directoryParts, searchFileName);
