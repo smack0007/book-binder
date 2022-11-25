@@ -1,5 +1,30 @@
 import { path } from "./deps.ts";
 
+export async function copyFile(
+  inputFilePath: string,
+  outputFilePath: string
+): Promise<void> {
+  const inputFileStat = await Deno.stat(inputFilePath);
+
+  let outputFileStat: Deno.FileInfo | null = null;
+  try {
+    outputFileStat = await Deno.stat(outputFilePath);
+  } catch (error) {
+    if (!(error instanceof Deno.errors.NotFound)) {
+      throw error;
+    }
+  }
+
+  if (
+    outputFileStat === null ||
+    inputFileStat.mtime === null ||
+    outputFileStat.mtime === null ||
+    outputFileStat.mtime > inputFileStat.mtime
+  ) {
+    await Deno.copyFile(inputFilePath, outputFilePath);
+  }
+}
+
 export async function ensureDirectory(path: string): Promise<void> {
   try {
     await Deno.mkdir(path, { recursive: true });
