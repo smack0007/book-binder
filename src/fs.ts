@@ -70,11 +70,21 @@ export async function fileExists(filename: string): Promise<boolean> {
 }
 
 export async function readTextFile(filePath: string): Promise<string> {
-  return await Deno.readTextFile(filePath);
+  try {
+    return await Deno.readTextFile(filePath);
+  } catch (error) {
+    console.error(`Failed to read text file ${filePath}.`, error);
+    throw error;
+  }
 }
 
 export function readTextFileSync(filePath: string): string {
-  return Deno.readTextFileSync(filePath);
+  try {
+    return Deno.readTextFileSync(filePath);
+  } catch (error) {
+    console.error(`Failed to read text file ${filePath}.`, error);
+    throw error;
+  }
 }
 
 /**

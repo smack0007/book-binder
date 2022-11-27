@@ -107,7 +107,7 @@ function loadCss(filePath: string): string {
     result = convertSass(result);
   }
 
-  result = result.replaceAll(/\@import \"(.*)\";/g, (_match, p1) => {
+  result = result.replaceAll(/\@import \"(.*?)\";/g, (_match, p1) => {
     return loadCss(path.join(path.dirname(filePath), p1));
   });
 
