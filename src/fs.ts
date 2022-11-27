@@ -1,5 +1,7 @@
 import { path } from "./deps.ts";
 
+const IS_WINDOWS = Deno.build.os === "windows";
+
 export async function copyFile(
   inputFilePath: string,
   outputFilePath: string
@@ -94,7 +96,9 @@ export async function resolveFile(
   }
 
   while (directoryParts.length > 0) {
-    const searchPath = path.join(...directoryParts, searchFileName);
+    const searchPath =
+      (!IS_WINDOWS ? path.SEP : "") +
+      path.join(...directoryParts, searchFileName);
 
     if (await fileExists(searchPath)) {
       return searchPath;
